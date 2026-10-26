@@ -1,0 +1,12 @@
+gantt
+    title L=10,000 时 Prefill 计算量对比 (单位: 行·层)
+    dateFormat X
+    axisFormat %s
+
+    section 全量传统 Prefill
+    Encoder 20层全量     :active, 0, 200000
+    Decoder 20层全量     :crit, 200000, 400000
+
+    section DeepInfer 有界重放
+    Encoder 20层全量     :active, 0, 200000
+    Decoder 有界重放 128 :done, 200000, 202800

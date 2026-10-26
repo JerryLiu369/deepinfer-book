@@ -1,0 +1,15 @@
+graph TD
+    subgraph StateBlock 槽位布局: 2916672 字节每序列
+        subgraph 存储区 Stored SWA: 前 20 层 Encoder
+            Layer0_19[20 层 × 134 Token × 528 字节 = 1415040 字节]
+        end
+        subgraph 丢弃区 Dropped SWA: 后 20 层 Decoder
+            Layer20_39[20 层 × 134 Token × 528 字节 = 1415040 字节]
+        end
+        subgraph 累加状态 Accumulators
+            StatesBlock[ICA / CA 状态: 86592 字节]
+        end
+    end
+
+    Note1[134 槽位构成: 128 滑动窗口 + 6 最大投机回退步长]
+    Note2[落盘仅保存前 20 层存储区，后 20 层现场有界重放]

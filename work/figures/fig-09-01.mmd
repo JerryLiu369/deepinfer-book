@@ -1,0 +1,23 @@
+sequenceDiagram
+    autonumber
+    participant DP_R0 as DP Rank 0 (本地请求)
+    participant DP_R1 as DP Rank 1 (本地请求)
+    participant DeepEP as DeepEP 全互联通信
+    participant EP_Card0 as GPU 0 (托管专家 0~5)
+    participant EP_Card1 as GPU 1 (托管专家 6~11)
+
+    Note over DP_R0,DP_R1: 注意力阶段：各卡独立跑数据并行 (DP)，无跨卡同步
+    DP_R0->>DP_R0: Gate 门控路由计算，得出目标专家
+    DP_R1->>DP_R1: Gate 门控路由计算，得出目标专家
+    
+    Note over DeepEP: MoE Dispatch 阶段：跨卡全分发
+    DP_R0->>DeepEP: 发送分配给专家 6~11 的 Token
+    DP_R1->>DeepEP: 发送分配给专家 0~5 的 Token
+    DeepEP->>EP_Card0: 投递全部命中专家 0~5 的 Token
+    DeepEP->>EP_Card1: 投递全部命中专家 6~11 的 Token
+
+    Note over EP_Card0,EP_Card1: 专家前向：本地计算 Grouped GEMM
+    EP_Card0->>DeepEP: Combine 归约回传
+    EP_Card1->>DeepEP: Combine 归约回传
+    DeepEP-->>DP_R0: 还原归位 Token 特征 (折叠共享专家)
+    DeepEP-->>DP_R1: 还原归位 Token 特征 (折叠共享专家)

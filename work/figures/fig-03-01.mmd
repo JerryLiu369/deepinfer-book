@@ -1,0 +1,19 @@
+graph TD
+    InputTokens[输入 Token 流] --> Emb[词嵌入 Embedding]
+    Emb --> Layer0_1[Layer 0~1: 纯 SWA 注意力 + MoE]
+    Layer0_1 --> Layer2_19[Layer 2~19 Encoder: SWA + C2 压缩 KV 投影 + MoE]
+    
+    subgraph CED_YOCO 架构分界点
+        Layer2_19 --> EncHidden[第 20 层 Encoder 末端全局隐藏状态]
+        EncHidden --> SharedKVProj[shared_hidden_kv_proj: 一次性投影生成 Decoder 块状 KV]
+    end
+
+    SharedKVProj --> DecoderKVCache[(共享 Decoder 块状 KV: 890 B/token)]
+    
+    EncHidden --> Layer20_39[Layer 20~39 Decoder: 纯 SWA 局部注意力 + 别名消费共享 KV + MoE]
+    DecoderKVCache -.跨层别名复用.-> Layer20_39
+
+    Layer20_39 --> FinalNorm[RMSNorm + LM Head]
+    FinalNorm --> Logits[输出 Logits]
+
+    Layer20_39 -.残差特征.-> DFlash[DFlash 3层并行草稿头: 预测未来 5 个 Token]

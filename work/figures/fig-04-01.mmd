@@ -1,0 +1,29 @@
+graph TB
+    Client([外部请求入口]) --> Recipe[deepseek-recipe: 协议清洗与流式解析]
+    Recipe --> Entrypoint[未开源: Entrypoint 入口路由服务]
+
+    subgraph 生产集群调度层 未开源
+        Entrypoint --> VE_LB[VE 负载均衡器]
+        Entrypoint --> P_LB[Prefill 负载均衡器: 二次代价模型]
+        Entrypoint --> D_LB[Decode 负载均衡器: DualPath 调度]
+    end
+
+    subgraph 存储基础设施 未开源
+        Storage[(3FS 分布式共享存储集群: 100 PiB SSD / TTL 3~7天)]
+    end
+
+    P_LB --> P_Node[Prefill 集群: 8卡标准机 / EP2~8]
+    D_LB --> D_Node[Decode 集群: 64~128卡超节点 / Wide-EP64~128]
+    VE_LB --> VE_Node[Vision Encoder 集群: 多模态编码]
+
+    VE_Node --特征传输--> P_Node
+    P_Node --写入初始状态--> Storage
+    Storage --GDR 快速换入--> D_Node
+
+    subgraph DeepInfer 开源执行单元 单机节点内部
+        P_Node -.驱动内核.-> DPEngine[DeepInfer 离线执行引擎]
+        D_Node -.驱动内核.-> DPEngine
+        DPEngine --- EPLB[内部 EPLB: 动态专家重平衡]
+        DPEngine --- ZOS_Sched[C++ ZOS 零开销调度]
+        DPEngine --- TL_Kernels[TileLang 双硬件高性能算子]
+    end

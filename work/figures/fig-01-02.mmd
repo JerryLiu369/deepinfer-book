@@ -1,0 +1,18 @@
+gantt
+    title 批处理演进：静态批处理 vs 连续批处理 (Continuous Batching)
+    dateFormat X
+    axisFormat %s
+
+    section 静态批处理
+    请求 A (短)       :active, 0, 20
+    空闲等待气泡      :crit, 20, 60
+    请求 B (长)       :active, 0, 60
+    请求 C (中)       :active, 0, 40
+    空闲等待气泡      :crit, 40, 60
+
+    section 连续批处理
+    请求 A (短)       :active, 0, 20
+    请求 D (新插入)   :active, 20, 50
+    请求 B (长)       :active, 0, 60
+    请求 C (中)       :active, 0, 40
+    请求 E (新插入)   :active, 40, 60

@@ -1,0 +1,30 @@
+graph TD
+    UserApp[用户脚本: offline_inference.py] --> Entrypoints[entrypoints/llm.py: LLM 入口类]
+    
+    subgraph Python 控制面
+        Entrypoints --> Engine[engine/llm_engine.py: 调度协调器]
+        Engine --> Worker[worker/worker.py: 单卡工作进程]
+        Worker --> ModelRunner[worker/model_runner.py: 模型执行封装]
+    end
+
+    subgraph C++ 调度执行核 csrc/engine/
+        Engine -.pybind11.-> CPPSched[csrc 调度器: Scheduler / BlockManager / Sequence]
+        Worker -.pybind11.-> ZOS_CPP[csrc/engine/zos.cpp: 异步流水线控制]
+    end
+
+    subgraph 神经网络模型层 model_executor/
+        ModelRunner --> DeepseekModel[models/deepseek.py: 主模型骨架]
+        DeepseekModel --> DecoderLayer[models/decoder_layer.py: 40层迭代]
+        DecoderLayer --> V4Attn[v4_modules/attn.py: MLA与SWA注意力]
+        DecoderLayer --> V4MoE[v4_modules/mlp.py: 384专家并行前向]
+        DecoderLayer --> DFlashModule[models/mtp/dflash.py: 草稿预测模块]
+    end
+
+    subgraph 底层算子与硬件分发 tilelang_ops/ & vendor/
+        V4Attn --> TileRoot[tilelang_ops/: 平台动态重定向]
+        V4MoE --> DeepEP[vendor/DeepEP: 跨卡专家通信]
+        V4MoE --> DeepGEMM[vendor/DeepGEMM: FP8 矩阵乘]
+        V4Attn --> FlashMLA[vendor/FlashMLA: MLA 解码内核]
+        TileRoot --> CUDABackend[tilelang_ops/cuda/: 英伟达算子]
+        TileRoot --> ASCBackend[tilelang_ops/asc/: 昇腾950算子]
+    end

@@ -1,0 +1,18 @@
+graph LR
+    subgraph GPU HBM 显存物理布局
+        subgraph 分页块状存储 BlockManager 1
+            ca_cache[ca_cache: 288 B/token<br>主注意力和跨层投影 KV]
+            ica_cache[ica_cache: 68 B/token<br>稀疏 Indexer K]
+        end
+
+        subgraph 固定槽位存储 BlockManager 2
+            swa_cache[swa_cache: 528 B/token/层<br>134 环形 SWA 状态]
+            states[ca_state & ica_state: 边界累加状态]
+        end
+
+        Weights[模型静态权重与 Engram 表]
+        GraphPool[CUDA Graph 预分配内存池]
+    end
+
+    BlockManager1[(块状 KV: 890 B/token)] -.持久化落盘.-> Storage3FS[(外置 3FS 集群)]
+    BlockManager2[(SWA 状态: 1.41 MB/seq)] -.单次会话活跃.-> HostRAM[(Host 内存缓冲区)]

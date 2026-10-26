@@ -1,0 +1,15 @@
+sequenceDiagram
+    autonumber
+    participant App as 客户端/引擎
+    participant Pool as 异步编译线程池
+    participant Grammar as xgrammar 核心
+    participant GPU as GPU 采样器 (TileLang)
+
+    App->>Pool: 提交 JSON Schema 规范
+    Pool->>Grammar: 解析语法结构，生成状态机 (DFA)
+    Note over Grammar: 预生成首步及后续投机 k+1 步合法 Token 集合
+    Grammar->>GPU: 将合法 Token 位掩码 (Bitmask) 拷入 Pinned 内存
+    GPU->>GPU: 执行主模型 Forward，产出全词表 Logits
+    GPU->>GPU: TileLang 融合算子读取 Bitmask，将非法 Token 置为 -inf
+    GPU->>GPU: 在合法子集内执行 Softmax 采样
+    GPU-->>App: 产出 100% 保证语法合规的 Token

@@ -1,0 +1,20 @@
+sequenceDiagram
+    autonumber
+    participant Client as 客户端
+    participant Engine as 推理引擎
+    participant GPU_Compute as GPU 算力单元 (Tensor Core)
+    participant GPU_Memory as GPU 显存带宽 (HBM)
+
+    Client->>Engine: 发送 Prompt (长输入)
+    Note over Engine,GPU_Compute: Prefill 阶段：算力受限 (Compute-Bound)
+    Engine->>GPU_Compute: 一次性大矩阵乘法处理全部输入 Token
+    GPU_Compute-->>GPU_Memory: 将生成的初始 KV Cache 写入显存
+    Engine-->>Client: 返回首字 (TTFT)
+
+    Note over Engine,GPU_Memory: Decode 阶段：访存带宽受限 (Memory-Bound)
+    loop 逐字自回归生成 (TBT 间隔)
+        Engine->>GPU_Memory: 读取全部历史 KV Cache (高频显存搬运)
+        Engine->>GPU_Compute: 单 Token 向量矩阵计算
+        GPU_Compute-->>GPU_Memory: 增量追加新 Token 的 KV
+        Engine-->>Client: 流式返回下一个 Token
+    end

@@ -1,0 +1,12 @@
+gantt
+    title 112 KiB 数据块换入耗时对比 (微秒)
+    dateFormat X
+    axisFormat %s
+
+    section 传统 cudaMemcpyAsync
+    API 启动与队列调度开销 :crit, 0, 6
+    PCIe 物理搬运耗时      :active, 6, 9
+
+    section GPUDirect RDMA (GDR)
+    RDMA Write 启动开销   :active, 0, 1
+    网络直通显存搬运耗时   :done, 1, 4

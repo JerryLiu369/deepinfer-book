@@ -1,0 +1,17 @@
+graph TB
+    subgraph 4级负载均衡治理体系 未开源
+        Gateway[统一生产接入网关] --> VE_LB[VE 负载均衡器: 图像批次平衡]
+        Gateway --> P_LB[Prefill 负载均衡器: 二次代价模型分档]
+        Gateway --> D_LB[Decode 负载均衡器: DualPath 兼顾长度与请求数]
+        D_LB --> EPLB_Inner[EPLB 专家内平衡]
+    end
+
+    subgraph 3FS 外置分布式持久化存储 未开源
+        Storage[(3FS 集群: 100 PiB NVMe SSD 池<br>10 TiB/s 读带宽 / TTL 3~7天)]
+    end
+
+    P_LB --> PrefillGroup[Prefill 计算节点]
+    D_LB --> DecodeGroup[Decode 计算超节点]
+
+    PrefillGroup --异步写状态--> Storage
+    Storage --GPUDirect RDMA 换入--> DecodeGroup

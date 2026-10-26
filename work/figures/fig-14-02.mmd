@@ -1,0 +1,8 @@
+graph TD
+    Start{业务技术选型决策} --> ModelType{是否只服务 DeepSeek-V4.1-Flash?}
+    ModelType --否--> MultiModel[选择 vLLM 或 SGLang<br>具备完整的百模支持与在线生态]
+    ModelType --是--> HWType{硬件是否为 NVIDIA SM100 或 华为昇腾 950?}
+    HWType --否--> MainstreamHW[选择 vLLM 或 SGLang<br>支持 H100/A100/AMD/各类显卡]
+    HWType --是--> Target{是否需要开箱即用的在线 OpenAI API?}
+    Target --是--> ServiceReady[选择 vLLM 或 SGLang<br>具备完整在线服务与多租户网关]
+    Target --否--> DeepInferDirect[选择 / 研读 DeepInfer<br>在目标硬件上压榨 V4.1-Flash 极限成本]

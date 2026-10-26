@@ -1,0 +1,23 @@
+sequenceDiagram
+    autonumber
+    participant App as 应用程序
+    participant LLM as entrypoints.llm.LLM
+    participant Engine as LLMEngine
+    participant Sched as C++ Scheduler
+    participant Worker as Worker 进程
+    participant Runner as ModelRunner
+    participant GPU as GPU 硬件
+
+    App->>LLM: generate(prompts, sampling_params)
+    LLM->>Engine: add_request(...)
+    Engine->>Sched: 加入 waiting 队列
+    loop 每步调度迭代 (Step)
+        Engine->>Sched: schedule() 决定当前批次
+        Sched-->>Engine: 返回 SequenceGroupMetadata 列表
+        Engine->>Worker: execute_model(seq_metadata)
+        Worker->>Runner: 构造 InputMetadata 与 Tensor
+        Runner->>GPU: 启动 CUDA Graph 或前向 Kernel
+        GPU-->>Worker: 异步采样产出新 Token
+        Worker-->>Engine: 回传采样结果 (ZOS 下滞后一步确认)
+    end
+    LLM-->>App: 返回完整 RequestOutput 结果列表

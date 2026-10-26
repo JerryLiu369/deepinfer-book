@@ -1,0 +1,16 @@
+graph TD
+    StatsCollector[在线访问统计: 记录各专家被命中频次] --> Policy[policy.py 两级贪心策略]
+    
+    subgraph 专家重平衡决策
+        Policy --> HotDetect[识别热点专家: 命中率显著偏高]
+        Policy --> BinPacking[两级装箱算法: 将冗余专家副本放入空闲 GPU]
+    end
+
+    subgraph 权重同步搬运
+        BinPacking --> NVL_Check{是否在同一 NVLink 域?}
+        NVL_Check --是--> SymmMem[CUDA IPC 对称内存直读: 零拷贝复制]
+        NVL_Check --否--> P2P_Transfer[跨节点 RDMA 分桶搬运]
+    end
+
+    SymmMem --> ActiveExec[动态切入生效，负载不均衡度恢复至 1.03~1.07]
+    P2P_Transfer --> ActiveExec

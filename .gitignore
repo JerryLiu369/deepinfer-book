@@ -1,0 +1,35 @@
+# Cloned external reference repositories (large upstream repos)
+work/sources/
+
+# Intermediate build artifacts and test renders
+work/build/*.png
+work/build/page_*.png
+
+# Python & Environment
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+env/
+.env
+.env.*
+*.local
+
+# Secrets & Keys
+*.key
+*.pem
+*.keystore
+*.jks
+
+# System & IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Temporary files
+*.tmp
+*.log

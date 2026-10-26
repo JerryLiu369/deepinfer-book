@@ -1,0 +1,17 @@
+graph TD
+    User([用户 API 请求]) --> Gateway[未开源: 生产网关与路由 LB]
+    Gateway --> KVCacheStore[未开源: 3FS KV分布式存储集群]
+    Gateway --> PrefillCluster[未开源: 生产 Prefill 集群]
+    Gateway --> DecodeCluster[未开源: 生产 Decode 集群]
+
+    subgraph DeepInfer 开源范围
+        CoreEngine[DeepInfer 核心引擎]
+        CoreEngine --- ZOS[C++ ZOS 调度器]
+        CoreEngine --- TileOps[TileLang 双硬件算子]
+        CoreEngine --- Offline[离线 LLM.generate 接口]
+    end
+
+    PrefillCluster -.单机执行核.-> CoreEngine
+    DecodeCluster -.单机执行核.-> CoreEngine
+
+    Recipe[deepseek-recipe: Rust 协议编解码与流式解析] --> Gateway

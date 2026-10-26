@@ -1,0 +1,12 @@
+graph TD
+    vLLM_Early[2023-2024 vLLM v0.2.x 早期骨架] --> DeepInfer[DeepInfer 专用生产引擎]
+    SGLang_Overlap[SGLang Overlap Scheduler 调度思想] --> DeepInfer
+    
+    subgraph DeepSeek 开源反哺生态
+        DeepInfer -.开源底层内核库.-> DeepKernelPool[FlashMLA / DeepGEMM / DeepEP]
+        DeepKernelPool --> vLLM_Modern[vLLM 最新主线 v0.9.x / V1 引擎]
+        DeepKernelPool --> SGLang_Modern[SGLang 最新主线 v0.5.x]
+    end
+
+    DeepInfer -.DSpark 变长验证算子.-> vLLM_Modern
+    DeepInfer -.Engram Offload 算子.-> SGLang_Modern

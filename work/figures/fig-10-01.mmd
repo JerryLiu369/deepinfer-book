@@ -1,0 +1,16 @@
+gantt
+    title 固定验证 5 Token vs DSpark 变长验证对比
+    dateFormat X
+    axisFormat %s
+
+    section 固定验证 5 Token
+    验证 Token 1 (命中) :active, 0, 10
+    验证 Token 2 (命中) :active, 10, 20
+    验证 Token 3 (拒绝) :crit, 20, 30
+    浪费验证 Token 4    :crit, 30, 40
+    浪费验证 Token 5    :crit, 40, 50
+
+    section DSpark 变长验证 (裁剪为 2)
+    验证 Token 1 (命中) :active, 0, 10
+    验证 Token 2 (命中) :active, 10, 20
+    节省算力槽位提前结束 :done, 20, 50

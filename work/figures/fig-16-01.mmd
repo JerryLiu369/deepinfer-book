@@ -1,0 +1,6 @@
+graph LR
+    S1[第 1 站: 入口与配置<br>examples/ & entrypoints/] --> S2[第 2 站: 调度与生命周期<br>engine/ & csrc/engine/]
+    S2 --> S3[第 3 站: 模型前向与CED骨干<br>models/deepseek.py]
+    S3 --> S4[第 4 站: 注意力与SWA重放<br>v4_modules/attn.py & yoco.py]
+    S4 --> S5[第 5 站: MoE并行与通信<br>v4_modules/mlp.py & eplb/]
+    S5 --> S6[第 6 站: 算子与双硬件分发<br>tilelang_ops/ & vendor/]

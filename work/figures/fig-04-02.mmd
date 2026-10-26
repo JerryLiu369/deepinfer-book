@@ -1,0 +1,22 @@
+sequenceDiagram
+    autonumber
+    participant Client as 客户端
+    participant Entry as Entrypoint 路由
+    participant VE as Vision Encoder
+    participant Storage as 3FS 共享存储
+    participant Prefill as Prefill 集群 (EP4)
+    participant Decode as Decode 超节点 (EP64)
+
+    Client->>Entry: 提交多模态图文 Prompt
+    Entry->>VE: 抽取并编码图像
+    VE-->>Prefill: 传输视觉特征 Embedding
+    Entry->>Prefill: 发送文本 Token 序列
+    Note over Prefill: 8卡节点计算前 20 层 Encoder 隐状态
+    Prefill->>Storage: 写入初始 SWA 状态与 890B 块状 KV
+    Entry->>Decode: 调度请求进入 Decode 队列
+    Storage->>Decode: GDR 直通零拷贝换入初始 KV Cache
+    loop 逐 Token 自回归生成
+        Note over Decode: 64卡超节点 Wide-EP + DSpark 变长验证
+        Decode-->>Entry: 流式推送生成的 Token
+        Entry-->>Client: 客户端接收响应
+    end

@@ -1,0 +1,20 @@
+graph TD
+    Model[V4.1-Flash 模型执行体] --> AttnBlock[注意力模块]
+    Model --> MoEBlock[MoE 专家网络]
+    Model --> IndexBlock[稀疏选择与 Top-K]
+    Model --> FusedBlock[定制融合算子]
+
+    AttnBlock --> FlashMLA[FlashMLA: MLA 解码高速内核]
+    MoEBlock --> DeepEP[DeepEP: 跨卡专家全互联通信]
+    MoEBlock --> DeepGEMM[DeepGEMM: FP8 矩阵乘与 Mega MoE]
+    IndexBlock --> DeepSelect[DeepSelect: 硬件级稀疏索引过滤]
+    FusedBlock --> TileKernels[TileKernels & TileLang: 双硬件自动生成]
+
+    subgraph 硬件底层落地
+        FlashMLA --> NV_GPU[英伟达 SM100]
+        DeepGEMM --> NV_GPU
+        DeepEP --> NV_GPU
+        DeepEP --> ASC_NPU[华为昇腾 950]
+        TileKernels --> NV_GPU
+        TileKernels --> ASC_NPU
+    end

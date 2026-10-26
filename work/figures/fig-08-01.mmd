@@ -1,0 +1,12 @@
+graph TD
+    subgraph 精确重建历史 SWA KV
+        L_All[全部长历史序列 L = 10,000] --> ConvFull[逐层感受野扩散: 深度依赖 2,560 Token]
+        ConvFull --> FullRecompute[前向全量跑过 20 层: 产生 200,000 行·层算力]
+    end
+
+    subgraph 有界截断重放 Bounded Replay
+        L_Recent[仅保留最后 128 Token] --> Truncate[视界强行截断: max s, i-127]
+        Truncate --> BoundedRecompute[仅计算末尾 128 Token: 仅产生 2,800 行·层算力]
+    end
+
+    BoundedRecompute -.算力节省.-> Gain[Decoder Prefill 算力骤降 98.6%<br>全模型 Prefill 算力近乎减半]

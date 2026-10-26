@@ -1,0 +1,15 @@
+sequenceDiagram
+    autonumber
+    participant CPU as CPU 调度器 (Worker/C++)
+    participant Pinned as Pinned 锁页内存 (Host)
+    participant GPU_K as TileLang 修正内核 (GPU)
+    participant GPU_F as 主模型前向 (GPU Forward)
+
+    Note over CPU,GPU_F: 第 N 步 GPU 前向期间，CPU 准备第 N+1 步
+    CPU->>Pinned: 写入初步计划 (remap 映射表, 总 token 预算)
+    CPU->>GPU_K: 启动调度修正内核 (schedule_mtp_varlen)
+    Note over GPU_K: 读取上一步采样结果与置信度
+    GPU_K->>GPU_K: 就地重算各请求验证长度 seqlens_q
+    GPU_K->>Pinned: 写回修正后的 seqlens_q (保持总预算不变)
+    GPU_K->>GPU_F: 触发主模型前向计算 (无须等 CPU 介入)
+    Note over CPU: CPU 并行执行第 N-1 步的 Token 后处理

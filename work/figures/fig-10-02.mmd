@@ -1,0 +1,10 @@
+graph LR
+    subgraph 低并发区域 每卡 16 并发
+        LowConc[显存带宽主导 Memory-Bound] --> LowCost[算力槽位近乎免费]
+        LowCost --> LowPenalty[固定开销占比高: 裁剪换不来阶梯跃迁，吞吐 -1.5%]
+    end
+
+    subgraph 生产高并发区域 每卡 60 并发
+        HighConc[计算单元主导 Compute-Bound] --> HighLoad[算力严重紧缺]
+        HighLoad --> HighBenefit[裁剪使 CUDA Graph 跃迁 10 个档位: 吞吐 +4~7%]
+    end

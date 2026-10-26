@@ -1,0 +1,25 @@
+gantt
+    title 同步调度与 ZOS 异步调度时间线对比
+    dateFormat X
+    axisFormat %s
+
+    section 同步模式 CPU
+    调度 N           : 0, 10
+    等待 GPU 采样     : 10, 30
+    后处理 N         : 30, 40
+    调度 N+1         : 40, 50
+
+    section 同步模式 GPU
+    等待 CPU 调度     : 0, 10
+    前向与采样 N     : 10, 30
+    等待 CPU 后处理   : 30, 50
+    前向与采样 N+1   : 50, 70
+
+    section ZOS 模式 CPU
+    后处理 N-1 + 调度 N+1 : 10, 30
+    后处理 N + 调度 N+2   : 30, 50
+
+    section ZOS 模式 GPU
+    前向与采样 N     : 10, 30
+    前向与采样 N+1   : 30, 50
+    前向与采样 N+2   : 50, 70
