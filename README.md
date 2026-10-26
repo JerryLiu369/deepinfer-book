@@ -8,7 +8,7 @@
 
 这是一本关于 [DeepSeek DeepInfer](https://github.com/deepseek-ai/DeepInfer) 推理引擎的中文学习书，同时也是它完整的制作记录。
 
-**成品**：[`dist/deepinfer_book.pdf`](dist/deepinfer_book.pdf)，共 17 章、前言和 5 个附录。
+**成品**：[`dist/deepinfer_book.pdf`](dist/deepinfer_book.pdf)（也可在 [Releases](https://github.com/JerryLiu369/deepinfer-book/releases) 下载），共 17 章、前言和 5 个附录。
 
 ### 这本书讲什么
 
@@ -88,7 +88,7 @@ bash build/build_pdf.sh              # 输出 dist/deepinfer_book.pdf
 
 A Chinese-language study book on the [DeepSeek DeepInfer](https://github.com/deepseek-ai/DeepInfer) inference engine, published together with the full record of how it was produced.
 
-**Deliverable**: [`dist/deepinfer_book.pdf`](dist/deepinfer_book.pdf) (preface, 17 chapters, 5 appendices; written in Chinese).
+**Deliverable**: [`dist/deepinfer_book.pdf`](dist/deepinfer_book.pdf) (also under [Releases](https://github.com/JerryLiu369/deepinfer-book/releases)) (preface, 17 chapters, 5 appendices; written in Chinese).
 
 ### What the book covers
 
