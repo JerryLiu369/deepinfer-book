@@ -78,6 +78,10 @@ bash build/build_pdf.sh              # 输出 dist/deepinfer_book.pdf
 
 - [deepinfer-video](https://github.com/JerryLiu369/deepinfer-video)：同一主题的配套视频系列，复用本仓库的 `research/` 作为知识库。
 
+### 许可证
+
+[MIT](LICENSE)。
+
 ---
 
 ## English
@@ -123,3 +127,7 @@ bash build/build_pdf.sh          # rebuild dist/deepinfer_book.pdf (needs pandoc
 ### Related
 
 - [deepinfer-video](https://github.com/JerryLiu369/deepinfer-video): a companion video series on the same subject. It uses `research/` from this repository as its knowledge base.
+
+### License
+
+[MIT](LICENSE).
