@@ -1,28 +1,26 @@
-# Cloned external reference repositories (large upstream repos)
-work/sources/
+# 研究素材：克隆的上游源码（由 scripts/fetch_sources.sh 还原）
+research/sources/
 
-# Intermediate build artifacts and test renders
-work/build/*.png
-work/build/page_*.png
+# 构建中间产物
+manuscript/_out/
+manuscript/figures/*.tmp
+build/page_*.png
 
-# Python & Environment
+# Python
 __pycache__/
 *.py[cod]
-*$py.class
 .venv/
 venv/
-env/
+
+# 环境与密钥
 .env
 .env.*
-*.local
-
-# Secrets & Keys
 *.key
 *.pem
 *.keystore
 *.jks
 
-# System & IDE
+# 系统与编辑器
 .DS_Store
 Thumbs.db
 .idea/
@@ -30,6 +28,6 @@ Thumbs.db
 *.swp
 *.swo
 
-# Temporary files
+# 临时文件
 *.tmp
 *.log
